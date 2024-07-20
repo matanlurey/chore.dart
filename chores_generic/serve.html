@@ -63,7 +63,7 @@
     <section class="multi-line-signature">
         
 
-<span class="returntype"><a href="https://api.dart.dev/stable/3.4.4/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.4.4/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">(<span class="field"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-core/Uri-class.html">Uri</a></span>, </span><span class="field"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span></span>)</span>&gt;</span></span>
 <span class="name ">serve</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="serve-param-path">{<span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-core/String-class.html">String</a></span> <span class="parameter-name">path</span>, </span></li>
 <li><span class="parameter" id="serve-param-open"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">open</span> = <span class="default-value">false</span>, </span></li>
 <li><span class="parameter" id="serve-param-port"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-core/int-class.html">int</a></span> <span class="parameter-name">port</span> = <span class="default-value">8080</span>, </span></li>
@@ -82,7 +82,7 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; serve({
+  <pre class="language-dart"><code class="language-dart">Future&lt;(Uri, Future&lt;void&gt;)&gt; serve({
   required String path,
   bool open = false,
   int port = 8080,
@@ -92,10 +92,12 @@
     final handler = createStaticHandler(path, defaultDocument: &#39;index.html&#39;);
     final server = await shelf_io.serve(handler, &#39;localhost&#39;, port);
     context.addCleanup(server.close);
+
+    final url = Uri.http(&#39;localhost:$port&#39;);
     if (open) {
-      await context.use(openBrowser(Uri.http(&#39;localhost:$port&#39;)));
+      await context.use(openBrowser(url));
     }
-    return context.use(waitUntilTerminated());
+    return (url, context.use(waitUntilTerminated()));
   });
 }</code></pre>
 </section>
