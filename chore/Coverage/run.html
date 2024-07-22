@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the cleanup method from the Context class, for the Dart programming language.">
-  <title>cleanup method - Context class - chore library - Dart API</title>
+  <meta name="description" content="API docs for the run method from the Coverage class, for the Dart programming language.">
+  <title>run method - Coverage class - chore library - Dart API</title>
 
 
   
@@ -30,10 +30,10 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">chore</a></li>
     <li><a href="../../chore/chore-library.html">chore.dart</a></li>
-    <li><a href="../../chore/Context-class.html">Context</a></li>
-    <li class="self-crumb">cleanup abstract method</li>
+    <li><a href="../../chore/Coverage-class.html">Coverage</a></li>
+    <li class="self-crumb">run method</li>
   </ol>
-  <div class="self-name">cleanup</div>
+  <div class="self-name">run</div>
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
@@ -54,31 +54,93 @@
 <div
     id="dartdoc-main-content"
     class="main-content"
-    data-above-sidebar="chore&#47;Context-class-sidebar.html"
+    data-above-sidebar="chore&#47;Coverage-class-sidebar.html"
     data-below-sidebar="">
     <div>
-<h1><span class="kind-method">cleanup</span> abstract method 
+<h1><span class="kind-method">run</span> method 
 </h1></div>
 
     <section class="multi-line-signature">
       
+  <div>
+    <ol class="annotation-list">
+        <li>@<a href="https://api.dart.dev/stable/3.4.4/dart-core/override-constant.html">override</a></li>
+    </ol>
+  </div>
 
 <span class="returntype"><a href="https://api.dart.dev/stable/3.4.4/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-<span class="name ">cleanup</span>(<wbr>)
+<span class="name ">run</span>(<wbr>)
 
-      
+      <div class="features"><span class="feature">override</span></div>
 
     </section>
     
 <section class="desc markdown">
-  <p>Runs all cleanup functions, and terminates the task if necessary.</p>
+  <p>Runs this command.</p>
+<p>The return value is wrapped in a <code>Future</code> if necessary and returned by
+<a href="https://pub.dev/documentation/args/2.5.0/command_runner/CommandRunner/runCommand.html">CommandRunner.runCommand</a>.</p>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; cleanup();</code></pre>
+  <pre class="language-dart"><code class="language-dart">@override
+Future&lt;void&gt; run() async {
+  final argResults = this.argResults!;
+  final outputDir = p.join(
+    _chore.workingDirectory,
+    argResults.option(&#39;output&#39;),
+  );
+
+  &#47;&#47; Generate LCOV.
+  io.stderr.writeln(&#39;Generating LCOV in $outputDir...&#39;);
+  final testWithCoverage = await io.Process.run(&#39;dart&#39;, [
+    &#39;run&#39;,
+    &#39;coverage:test_with_coverage&#39;,
+    &#39;--out=$outputDir&#39;,
+    if (argResults.rest.isNotEmpty) ...[&#39;--&#39;, ...argResults.rest],
+  ]);
+  if (testWithCoverage.exitCode != 0) {
+    _chore.stderr.writeln(testWithCoverage.stderr);
+    io.exitCode = 1;
+    return;
+  }
+
+  &#47;&#47; Early exit if the format is LCOV.
+  if (argResults.option(&#39;format&#39;) != &#39;html&#39;) {
+    return;
+  }
+
+  &#47;&#47; Generate HTML.
+  io.stderr.writeln(&#39;Generating HTML...&#39;);
+  final generateHtml = await io.Process.run(&#39;genhtml&#39;, [
+    p.join(outputDir, &#39;lcov.info&#39;),
+    &#39;-o&#39;,
+    p.join(outputDir, &#39;html&#39;),
+  ]);
+  if (generateHtml.exitCode != 0) {
+    _chore.stderr.writeln(generateHtml.stderr);
+    io.exitCode = 1;
+    return;
+  }
+
+  &#47;&#47; Preview the HTML report.
+  final handler = createStaticHandler(
+    p.join(outputDir, &#39;html&#39;),
+    defaultDocument: &#39;index.html&#39;,
+  );
+  final port = int.parse(argResults.option(&#39;port&#39;)!);
+  final server = await shelf_io.serve(handler, &#39;localhost&#39;, port);
+  _chore.stdout.writeln(
+    &#39;Serving coverage report on &#39;
+    &#39;http:&#47;&#47;${server.address.host}:${server.port}&#39;,
+  );
+
+  &#47;&#47; Wait for the command runner to terminate.
+  await _chore.onTerminate.first;
+  await server.close(force: true);
+}</code></pre>
 </section>
 
 
@@ -95,12 +157,12 @@
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">chore</a></li>
     <li><a href="../../chore/chore-library.html">chore</a></li>
-    <li><a href="../../chore/Context-class.html">Context</a></li>
-    <li class="self-crumb">cleanup abstract method</li>
+    <li><a href="../../chore/Coverage-class.html">Coverage</a></li>
+    <li class="self-crumb">run method</li>
 </ol>
 
 
-    <h5>Context class</h5>
+    <h5>Coverage class</h5>
     <div id="dartdoc-sidebar-left-content"></div>
   </div><!--/.sidebar-offcanvas-->
 

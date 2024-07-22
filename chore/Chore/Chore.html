@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the use method from the Context class, for the Dart programming language.">
-  <title>use method - Context class - chore library - Dart API</title>
+  <meta name="description" content="API docs for the Chore constructor from Class Chore from the chore library, for the Dart programming language.">
+  <title>Chore constructor - Chore - chore library - Dart API</title>
 
 
   
@@ -30,10 +30,10 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">chore</a></li>
     <li><a href="../../chore/chore-library.html">chore.dart</a></li>
-    <li><a href="../../chore/Context-class.html">Context</a></li>
-    <li class="self-crumb">use&lt;<wbr><span class="type-parameter">T</span>&gt; abstract method</li>
+    <li><a href="../../chore/Chore-class.html">Chore</a></li>
+    <li class="self-crumb">Chore factory constructor</li>
   </ol>
-  <div class="self-name">use</div>
+  <div class="self-name">Chore</div>
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
@@ -51,37 +51,52 @@
 </header>
 <main>
 
-<div
-    id="dartdoc-main-content"
-    class="main-content"
-    data-above-sidebar="chore&#47;Context-class-sidebar.html"
-    data-below-sidebar="">
-    <div>
-<h1><span class="kind-method">use&lt;<wbr><span class="type-parameter">T</span>&gt;</span> abstract method 
+  <div
+      id="dartdoc-main-content"
+      class="main-content"
+      data-above-sidebar="chore&#47;Chore-class-sidebar.html"
+      data-below-sidebar="">
+      <div>
+<h1><span class="kind-constructor">Chore</span> constructor 
 </h1></div>
 
     <section class="multi-line-signature">
       
-
-<span class="returntype">T</span>
-<span class="name ">use</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"><li><span class="parameter" id="use-param-hook"><span class="type-annotation">T</span> <span class="parameter-name">hook</span>(<ol class="parameter-list"><li><span class="parameter" id="param-ctx"><span class="type-annotation"><a href="../../chore/Context-class.html">Context</a></span> <span class="parameter-name">ctx</span></span></li>
-</ol>
-)</span></li>
+      <span class="name ">Chore</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-stdout">{<span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-core/StringSink-class.html">StringSink</a>?</span> <span class="parameter-name">stdout</span>, </span></li>
+<li><span class="parameter" id="-param-stderr"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-core/StringSink-class.html">StringSink</a>?</span> <span class="parameter-name">stderr</span>, </span></li>
+<li><span class="parameter" id="-param-isCI"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">isCI</span>, </span></li>
+<li><span class="parameter" id="-param-onTerminate"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-async/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span>?</span> <span class="parameter-name">onTerminate</span>}</span></li>
 </ol>)
-
-      
-
     </section>
+
     
 <section class="desc markdown">
-  <p>Uses the provide <code>hook</code> to do or generate something context-aware.</p>
+  <p>Creates a new instance of <a href="../../chore/Chore-class.html">Chore</a>.</p>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">T use&lt;T&gt;(T Function(Context ctx) hook);</code></pre>
+  <pre class="language-dart"><code class="language-dart">factory Chore({
+  StringSink? stdout,
+  StringSink? stderr,
+  bool? isCI,
+  Stream&lt;void&gt;? onTerminate,
+}) {
+  onTerminate ??= StreamGroup.merge([
+    io.ProcessSignal.sigint.watch(),
+    io.ProcessSignal.sigterm.watch(),
+  ]);
+  final chore = Chore.withCommands(
+    stdout: stdout,
+    stderr: stderr,
+    isCI: isCI ?? io.Platform.environment[&#39;CI&#39;] == &#39;true&#39;,
+    onTerminate: onTerminate,
+    commands: [Dartdoc.new, Coverage.new],
+  );
+  return chore;
+}</code></pre>
 </section>
 
 
@@ -98,17 +113,17 @@
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">chore</a></li>
     <li><a href="../../chore/chore-library.html">chore</a></li>
-    <li><a href="../../chore/Context-class.html">Context</a></li>
-    <li class="self-crumb">use&lt;<wbr><span class="type-parameter">T</span>&gt; abstract method</li>
+    <li><a href="../../chore/Chore-class.html">Chore</a></li>
+    <li class="self-crumb">Chore factory constructor</li>
 </ol>
 
 
-    <h5>Context class</h5>
+    <h5>Chore class</h5>
     <div id="dartdoc-sidebar-left-content"></div>
-  </div><!--/.sidebar-offcanvas-->
+  </div><!--/.sidebar-offcanvas-left-->
 
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
-</div><!--/.sidebar-offcanvas-->
+  </div><!--/.sidebar-offcanvas-->
 
 </main>
 
