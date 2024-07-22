@@ -84,10 +84,6 @@
   bool? isCI,
   Stream&lt;void&gt;? onTerminate,
 }) {
-  onTerminate ??= StreamGroup.merge([
-    io.ProcessSignal.sigint.watch(),
-    io.ProcessSignal.sigterm.watch(),
-  ]);
   final chore = Chore.withCommands(
     stdout: stdout,
     stderr: stderr,

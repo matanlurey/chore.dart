@@ -65,7 +65,7 @@
       <span class="name ">Chore.withCommands</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="withCommands-param-isCI">{<span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isCI</span> = <span class="default-value">false</span>, </span></li>
 <li><span class="parameter" id="withCommands-param-stdout"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-core/StringSink-class.html">StringSink</a>?</span> <span class="parameter-name">stdout</span>, </span></li>
 <li><span class="parameter" id="withCommands-param-stderr"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-core/StringSink-class.html">StringSink</a>?</span> <span class="parameter-name">stderr</span>, </span></li>
-<li><span class="parameter" id="withCommands-param-onTerminate"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-async/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span> <span class="parameter-name">onTerminate</span> = <span class="default-value">const Stream.empty()</span>, </span></li>
+<li><span class="parameter" id="withCommands-param-onTerminate"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-async/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span>?</span> <span class="parameter-name">onTerminate</span>, </span></li>
 <li><span class="parameter" id="withCommands-param-commands"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.4.4/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/args/2.5.0/command_runner/Command-class.html">Command</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span> Function<span class="signature">(<span class="parameter" id="param-"><span class="type-annotation"><a href="../../chore/Chore-class.html">Chore</a></span></span>)</span></span>&gt;</span></span> <span class="parameter-name">commands</span> = <span class="default-value">const []</span>}</span></li>
 </ol>)
     </section>
@@ -83,11 +83,16 @@
   bool isCI = false,
   StringSink? stdout,
   StringSink? stderr,
-  this.onTerminate = const Stream.empty(),
+  Stream&lt;void&gt;? onTerminate,
   List&lt;Command&lt;void&gt; Function(Chore)&gt; commands = const [],
 })  : _commands = commands,
       stdout = stdout ?? io.stdout,
       stderr = stderr ?? io.stderr,
+      onTerminate = onTerminate ??
+          StreamGroup.merge([
+            io.ProcessSignal.sigint.watch(),
+            io.ProcessSignal.sigterm.watch(),
+          ]),
       super(&#39;chore&#39;, &#39;A simple task runner&#39;) {
   argParser
     ..addOption(
