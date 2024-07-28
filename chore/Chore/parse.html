@@ -90,7 +90,7 @@ subclasses, but it shouldn't be called externally.</p>
   <pre class="language-dart"><code class="language-dart">@override
 ArgResults parse(Iterable&lt;String&gt; args) {
   &#47;&#47; Do an initial parse to get required options.
-  final results = super.parse(args);
+  final results = super.parse(args.takeWhile((arg) =&gt; arg.startsWith(&#39;-&#39;)));
   final workingDir = results.option(&#39;working-directory&#39;);
   _workingDirectory = p.normalize(workingDir ?? _findWorkingDir());
   _isCI = results.flag(&#39;ci&#39;);
