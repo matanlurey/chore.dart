@@ -1,5 +1,5 @@
 # Chore
 
-A minimal task runner.
+Repository was moved into a monorepo.
 
-[![CI](https://github.com/matanlurey/chore.dart/actions/workflows/ci.yaml/badge.svg)](https://github.com/matanlurey/chore.dart/actions/workflows/ci.yaml)
+See <https://github.com/matanlurey/pub.lurey.dev/tree/main/packages/chore>.
